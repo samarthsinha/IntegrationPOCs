@@ -27,7 +27,7 @@ public class HttpRequestExecutor {
     }
     url.append(requestResponseModel.getHost()).append(":")
         .append(requestResponseModel.getPort())
-        .append(requestResponseModel.getRequestUri());
+        .append(requestResponseModel.getRequestPath());
     if(requestResponseModel.getQueryParams()!=null &&requestResponseModel.getQueryParams().length()>0){
       url.append("?").append(requestResponseModel.getQueryParams());
     }

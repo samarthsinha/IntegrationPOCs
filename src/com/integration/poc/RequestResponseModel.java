@@ -11,7 +11,7 @@ public class RequestResponseModel {
   Boolean isHttps = Boolean.FALSE;
   String host;
   int port;
-  String requestUri;
+  String requestPath;
   String requestMethod;
   String payload;
   String queryParams;
@@ -69,12 +69,12 @@ public class RequestResponseModel {
     this.port = port;
   }
 
-  public String getRequestUri() {
-    return requestUri;
+  public String getRequestPath() {
+    return requestPath;
   }
 
-  public void setRequestUri(String requestUri) {
-    this.requestUri = requestUri;
+  public void setRequestPath(String requestPath) {
+    this.requestPath = requestPath;
   }
 
   public String getRequestMethod() {

@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.util.Arrays;
@@ -14,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  * @author b0095753 on 11/17/17.
@@ -38,7 +36,7 @@ public class IntegrationDataBuilderUtils {
       requestResponseModel.setSystemName(splitted[0]);
       requestResponseModel.setHost(splitted[1]);
       requestResponseModel.setPort(Integer.parseInt(splitted[2]));
-      requestResponseModel.setRequestUri(splitted[3]);
+      requestResponseModel.setRequestPath(splitted[3]);
       requestResponseModel.setRequestMethod(splitted[4]);
       requestResponseModel.setPayload(splitted[5]);
       requestResponseModel.setQueryParams(splitted[7]);
