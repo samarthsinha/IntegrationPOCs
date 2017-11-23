@@ -2,16 +2,26 @@ package com.integration.poc;
 
 import com.bazaarvoice.jolt.Chainr;
 import com.bazaarvoice.jolt.JsonUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  * @author b0095753 on 11/17/17.
  */
 public class IntegrationDataBuilderUtils {
+
+  private static ObjectMapper objectMapper = new ObjectMapper();
 
   private static final Map<String,RequestResponseModel> systemData = new HashMap<>();
 
@@ -31,8 +41,20 @@ public class IntegrationDataBuilderUtils {
       requestResponseModel.setRequestUri(splitted[3]);
       requestResponseModel.setRequestMethod(splitted[4]);
       requestResponseModel.setPayload(splitted[5]);
-      requestResponseModel.setJsonSpec(splitted[7]);
+      requestResponseModel.setQueryParams(splitted[7]);
+      requestResponseModel.setJsonSpec(splitted[8]);
+      try {
+        requestResponseModel.setPlaceholderToInputKey(objectMapper.readValue(splitted[9],new TypeReference<Map<String,String>>(){}));
+      } catch (IOException e) {
+
+      }
+      try {
+        System.out.println(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(requestResponseModel));
+      } catch (JsonProcessingException e) {
+        e.printStackTrace();
+      }
       systemData.put(requestResponseModel.getSystemName(),requestResponseModel);
+
     });
   }
 
@@ -65,13 +87,12 @@ public class IntegrationDataBuilderUtils {
       System.out.println("System not found");
       return new HashMap<>();
     }
+    requestResponseModel=replacePlaceholders(requestResponseModel,inputs);
     HttpResponseObject responseObject = null;
     try {
       responseObject = HttpRequestExecutor.fetchResponse(requestResponseModel);
       String s = responseObject.getResponse();
-//      System.out.println(responseObject.getHttpStatusCode());
       if(s!=null){
-//        System.out.println(requestResponseModel.getJsonSpec());
         List<Object> specs = JsonUtils.jsonToList(requestResponseModel.getJsonSpec());
         Chainr chainr = Chainr.fromSpec(specs);
         Object inputJSON = JsonUtils.jsonToObject(s);
@@ -81,5 +102,29 @@ public class IntegrationDataBuilderUtils {
     } catch (MalformedURLException e) {
     }
     return new HashMap<>();
+  }
+
+  private static RequestResponseModel replacePlaceholders(RequestResponseModel requestResponseModel,Map<String,String> inputs){
+    Map<String, String> placeholderToInputKey = requestResponseModel.getPlaceholderToInputKey();
+    for(Entry<String,String> entry: placeholderToInputKey.entrySet()){
+      String queryParams = requestResponseModel.getQueryParams();
+      if(queryParams!=null){
+        if(inputs.get(entry.getValue())!=null){
+          queryParams = queryParams.replace(entry.getKey(), URLEncoder.encode(inputs.get(entry.getValue())));
+        }else{
+          queryParams = queryParams.replace(entry.getKey(),"");
+        }
+        requestResponseModel.setQueryParams(queryParams);
+      }
+      String payload = requestResponseModel.getPayload();
+      if(payload!=null ){
+        if(inputs.get(entry.getValue())!=null){
+          payload.replace(entry.getKey(),URLEncoder.encode(inputs.get(entry.getValue())));
+        }else{
+          payload.replace(entry.getKey(),"");
+        }
+      }
+    }
+    return requestResponseModel;
   }
 }

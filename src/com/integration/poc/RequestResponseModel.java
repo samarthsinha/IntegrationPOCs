@@ -17,6 +17,16 @@ public class RequestResponseModel {
   String queryParams;
   Map<String,String> requestHeaders;
   String jsonSpec;
+  Map<String,String> placeholderToInputKey;
+
+  public Map<String, String> getPlaceholderToInputKey() {
+    return placeholderToInputKey;
+  }
+
+  public void setPlaceholderToInputKey(
+      Map<String, String> placeholderToInputKey) {
+    this.placeholderToInputKey = placeholderToInputKey;
+  }
 
   public String getSystemName() {
     return systemName;

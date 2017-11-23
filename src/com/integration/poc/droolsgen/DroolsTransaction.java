@@ -1,5 +1,6 @@
 package com.integration.poc.droolsgen;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**

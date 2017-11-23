@@ -28,14 +28,16 @@ public class HttpRequestExecutor {
     url.append(requestResponseModel.getHost()).append(":")
         .append(requestResponseModel.getPort())
         .append(requestResponseModel.getRequestUri());
-    if(requestResponseModel.getQueryParams()!=null)
+    if(requestResponseModel.getQueryParams()!=null &&requestResponseModel.getQueryParams().length()>0){
       url.append("?").append(requestResponseModel.getQueryParams());
+    }
     return url.toString();
   }
 
   public static HttpResponseObject fetchResponse(RequestResponseModel requestResponseModel)
       throws MalformedURLException {
     String s = urlBuilder(requestResponseModel);
+    System.out.println(String.format("Requesting url: [%s]",s));
     URL url = new URL(s);
     try {
       HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

@@ -14,7 +14,7 @@ public class TestRules {
   public static Object fireRules(String ruleName,String systemName){
     switch (ruleName){
       case "RULE_LOAN":
-        return loanRule("RuleLoan",IntegrationDataBuilderUtils.getResponseFromSystem(systemName,null));
+        return loanRule("RuleLoan",new HashMap<>());
     }
     return null;
 

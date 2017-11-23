@@ -24,30 +24,33 @@ public class IntegrationPOC {
     rulesMetaData.setOutputVariableName("response");
     rulesMetaData.setResponseParamsName("out");
     rulesMetaData.setCodeBlock("\tif(null != $rule.responseParamsName && $rule.responseParamsName#[[.size()]]# > 0) {\n"
-        + "\t\t\t$rule.outputVariableName#[[.put(\"STORE_NEW\",]]#$rule.responseParamsName#[[.get(\"STORE_))]]#\"\n));"
+        + "\t\t\t$rule.outputVariableName#[[.put(\"STORE_NEW\",]]#$rule.responseParamsName#[[.get(\"STORE_))]]#\"));\n"
         + "\t  }\n");
     return rulesMetaData;
   };
 
   public static void main(String[] args)
       throws Exception {
-    String systemCsv = "ESB_LOAN|localhost|8181|/mock/esb/fetchLoanDetails|GET|{}|{}|[{\"operation\":\"shift\",\"spec\":{\"manageCustomerDebtProfileResMsg\":{\"dataArea\":{\"manageCustomerDebtProfileResponse\":{\"geographicAddress\":{\"circle\":\"CIRCLE\"},\"loanDetails\":{\"loan\":{\"*\":{\"customerCreditProfile\":{\"creditType\":\"CREDIT-TYPE-&2\",\"eligibility\":\"LOAN-ELIGIB-&2\"}}}}}}}}}]\n"
-        + "ESB_RECOVERY|localhost|8181|/mock/esb/fetchLoanDetails|GET|{}|{}|[{\"operation\":\"shift\",\"spec\":{\"manageCustomerDebtProfileResMsg\":{\"dataArea\":{\"manageCustomerDebtProfileResponse\":{\"geographicAddress\":{\"circle\":\"CIRCLE\"},\"recoveryDetails\":{\"recovery\":{\"*\":{\"dunningNotification\":{\"type\":\"REC-TYPE-&2\",\"startDate\":\"REC-START-DATE-&2\",\"date\":\"REC-DATE-&2\",\"amount\":\"REC-AMOUNT-&2\"}}}}}}}}}]\n"
-        + "ESB_SHOP|localhost|8181|/mock/test/god/mode|GET|{}|{}|[{\"operation\":\"shift\",\"spec\":{\"store\":\"STORE_))\"}}]\n";
+    String systemCsv = "ESB_LOAN|localhost|8181|/mock/esb/fetchLoanDetails|GET|{PAYLOAD}|{HEADER}|msidsn=$msisdn&transaction-id=$transactionid|[{\"operation\":\"shift\",\"spec\":{\"manageCustomerDebtProfileResMsg\":{\"dataArea\":{\"manageCustomerDebtProfileResponse\":{\"geographicAddress\":{\"circle\":\"CIRCLE\"},\"loanDetails\":{\"loan\":{\"*\":{\"customerCreditProfile\":{\"creditType\":\"CREDIT-TYPE-&2\",\"eligibility\":\"LOAN-ELIGIB-&2\"}}}}}}}}}]|{\"$msisdn\":\"MSISDN\",\"$transactionid\":\"TRANSACTIONID\"}\n"
+        + "ESB_RECOVERY|localhost|8181|/mock/esb/fetchLoanDetails|GET|{}|{}||[{\"operation\":\"shift\",\"spec\":{\"manageCustomerDebtProfileResMsg\":{\"dataArea\":{\"manageCustomerDebtProfileResponse\":{\"geographicAddress\":{\"circle\":\"CIRCLE\"},\"recoveryDetails\":{\"recovery\":{\"*\":{\"dunningNotification\":{\"type\":\"REC-TYPE-&2\",\"startDate\":\"REC-START-DATE-&2\",\"date\":\"REC-DATE-&2\",\"amount\":\"REC-AMOUNT-&2\"}}}}}}}}}]|{}\n"
+        + "ESB_SHOP|localhost|8181|/mock/test/god/mode|GET|{}|{}||[{\"operation\":\"shift\",\"spec\":{\"store\":\"STORE_))\"}}]|{}\n";
     IntegrationDataBuilderUtils.init(systemCsv);
 
-    List<Function<Void,RulesMetaData>> functionsList = new ArrayList<>();
-    functionsList.add(DroolFileGenerationUtil.loanRecovery);
-    functionsList.add(DroolFileGenerationUtil.loanDetails);
-    functionsList.add(IntegrationPOC.function);
-    DroolFileGenerationUtil droolFileGenerationUtil = new DroolFileGenerationUtil();
-    DroolFileGenerationUtil.droolsBuilderFromVelocity(functionsList);
+//    List<Function<Void,RulesMetaData>> functionsList = new ArrayList<>();
+//    functionsList.add(DroolFileGenerationUtil.loanRecovery);
+//    functionsList.add(DroolFileGenerationUtil.loanDetails);
+//    functionsList.add(IntegrationPOC.function);
+//    DroolFileGenerationUtil droolFileGenerationUtil = new DroolFileGenerationUtil();
+//    DroolFileGenerationUtil.droolsBuilderFromVelocity(functionsList);
 
     DroolsDiagnosticService droolsDiagnosticService = DroolsDiagnosticService.getInstance();
 //    droolFileGenerationUtil.droolsStringBuilder(DroolFileGenerationUtil.loanDetails);
 
     DroolsTransaction droolsTransaction = new DroolsTransaction();
+
     droolsTransaction.setInputParams(new HashMap<String,String>(){{put("tag","ESB - LOAN DETAILS");}});
+    droolsTransaction.getInputParams().put("MSISDN","8447813975");
+    droolsTransaction.getInputParams().put("TRANSACTIONID","1123m &akdad");
     DroolsTransaction diagnose = droolsDiagnosticService.diagnose(droolsTransaction);
     readMap(diagnose.getOutputParams());
 
