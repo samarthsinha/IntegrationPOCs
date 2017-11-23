@@ -1,0 +1,41 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+version = '0.2'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven  {
+        url "http://repo1.maven.org/maven2"
+    }
+}
+sourceSets {
+    main.java.srcDir "src"
+}
+dependencies {
+//     https://mvnrepository.com/artifact/com.bazaarvoice.jolt/jolt-core
+//    compile group: 'com.bazaarvoice.jolt', name: 'jolt-core', version: '0.1.0'
+
+    // https://mvnrepository.com/artifact/org.drools/drools-compiler
+// https://mvnrepository.com/artifact/org.drools/drools-compiler
+    compile group: 'org.drools', name: 'drools-compiler', version: '6.5.0.Final'
+    compile group: 'com.bazaarvoice.jolt', name: 'jolt-complete', version: '0.1.0'
+    compile 'org.apache.velocity:velocity-engine-core:2.0'
+//    compile 'net.openhft:compiler:2.3.0'
+//    compile group: 'com.bazaarvoice.jolt', name: 'json-utils', version: '0.1.0'
+//    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "com.integration.poc.IntegrationPOC"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

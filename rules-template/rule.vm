@@ -1,0 +1,17 @@
+#include("./rules-template/imports.vm")
+
+#foreach($rule in $rulesMetaData)
+
+rule "$rule.ruleName"
+
+no-loop
+when
+  #[[$]]#droolsTransaction : DroolsTransaction(null != inputParams.get("tag") && inputParams.get("tag").equalsIgnoreCase("$rule.tagName"))
+then
+    Map<String, String> $rule.outputVariableName = new LinkedHashMap<String, String>();
+    Map<String,String> $rule.getResponseParamsName() = IntegrationDataBuilderUtils.getResponseFromSystem("$rule.getSystemName()", #[[$]]#droolsTransaction.getInputParams());
+    #evaluate($rule.codeBlock)
+    #[[$]]#droolsTransaction.setOutputParams($rule.outputVariableName);
+end
+
+#end
