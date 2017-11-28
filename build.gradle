@@ -25,6 +25,8 @@ dependencies {
     compile group: 'org.drools', name: 'drools-compiler', version: '6.5.0.Final'
     compile group: 'com.bazaarvoice.jolt', name: 'jolt-complete', version: '0.1.0'
     compile 'org.apache.velocity:velocity-engine-core:2.0'
+    // https://mvnrepository.com/artifact/org.json/json
+    compile group: 'org.json', name: 'json', version: '20140107'
 //    compile 'net.openhft:compiler:2.3.0'
 //    compile group: 'com.bazaarvoice.jolt', name: 'json-utils', version: '0.1.0'
 //    compile fileTree(dir: 'libs', include: ['*.jar'])

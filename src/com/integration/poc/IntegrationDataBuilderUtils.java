@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.json.JSONObject;
+import org.json.XML;
 
 /**
  * @author b0095753 on 11/17/17.
@@ -42,6 +44,7 @@ public class IntegrationDataBuilderUtils {
       requestResponseModel.setQueryParams(splitted[7]);
       requestResponseModel.setJsonSpec(splitted[8]);
       try {
+        requestResponseModel.setRequestHeaders(objectMapper.readValue(splitted[6],new TypeReference<Map<String,String>>(){}));
         requestResponseModel.setPlaceholderToInputKey(objectMapper.readValue(splitted[9],new TypeReference<Map<String,String>>(){}));
       } catch (IOException e) {
 
@@ -89,7 +92,7 @@ public class IntegrationDataBuilderUtils {
     HttpResponseObject responseObject = null;
     try {
       responseObject = HttpRequestExecutor.fetchResponse(requestResponseModel);
-      String s = responseObject.getResponse();
+      String s = fetchJsonResponse(responseObject);
       if(s!=null){
         List<Object> specs = JsonUtils.jsonToList(requestResponseModel.getJsonSpec());
         Chainr chainr = Chainr.fromSpec(specs);
@@ -124,5 +127,21 @@ public class IntegrationDataBuilderUtils {
       }
     }
     return requestResponseModel;
+  }
+
+  public static String fetchJsonResponse(HttpResponseObject httpResponseObject){
+    if(httpResponseObject==null) return "";
+    Map<String, List<String>> headers = httpResponseObject.getResponseHeaders();
+    if(headers!=null && (headers.containsKey("Content-Type") || headers.containsKey("content-type"))){
+      List<String> strings = headers.get("Content-Type")!=null?headers.get("Content-Type"):headers.get("content-type");
+      String contentType = strings.get(0)!=null?strings.get(0).toLowerCase():"";
+      if(contentType.contains("xml")){
+        JSONObject xmlJsonObject = XML.toJSONObject(httpResponseObject.getResponse());
+        return xmlJsonObject.toString();
+      }else if(contentType.contains("json")){
+        return httpResponseObject.getResponse();
+      }
+    }
+    return httpResponseObject.getResponse();
   }
 }

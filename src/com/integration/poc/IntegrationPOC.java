@@ -50,10 +50,12 @@ public class IntegrationPOC {
 
   public static void main(String[] args)
       throws Exception {
-    String systemCsv = "ESB_LOAN|localhost|8181|/mock/esb/fetchLoanDetails|GET|{PAYLOAD}|{HEADER}|msidsn=$msisdn&transaction-id=$transactionid|[{\"operation\":\"shift\",\"spec\":{\"manageCustomerDebtProfileResMsg\":{\"dataArea\":{\"manageCustomerDebtProfileResponse\":{\"geographicAddress\":{\"circle\":\"CIRCLE\"},\"loanDetails\":{\"loan\":{\"*\":{\"customerCreditProfile\":{\"creditType\":\"CREDIT-TYPE-&2\",\"eligibility\":\"LOAN-ELIGIB-&2\"}}}}}}}}}]|{\"$msisdn\":\"MSISDN\",\"$transactionid\":\"TRANSACTIONID\"}\n"
+    String systemCsv = "ESB_LOAN|localhost|8181|/mock/esb/fetchLoanDetails|GET|{PAYLOAD}|{}|msidsn=$msisdn&transaction-id=$transactionid|[{\"operation\":\"shift\",\"spec\":{\"manageCustomerDebtProfileResMsg\":{\"dataArea\":{\"manageCustomerDebtProfileResponse\":{\"geographicAddress\":{\"circle\":\"CIRCLE\"},\"loanDetails\":{\"loan\":{\"*\":{\"customerCreditProfile\":{\"creditType\":\"CREDIT-TYPE-&2\",\"eligibility\":\"LOAN-ELIGIB-&2\"}}}}}}}}}]|{\"$msisdn\":\"MSISDN\",\"$transactionid\":\"TRANSACTIONID\"}\n"
         + "ESB_RECOVERY|localhost|8181|/mock/esb/fetchLoanDetails|GET|{}|{}||[{\"operation\":\"shift\",\"spec\":{\"manageCustomerDebtProfileResMsg\":{\"dataArea\":{\"manageCustomerDebtProfileResponse\":{\"geographicAddress\":{\"circle\":\"CIRCLE\"},\"recoveryDetails\":{\"recovery\":{\"*\":{\"dunningNotification\":{\"type\":\"REC-TYPE-&2\",\"startDate\":\"REC-START-DATE-&2\",\"date\":\"REC-DATE-&2\",\"amount\":\"REC-AMOUNT-&2\"}}}}}}}}}]|{}\n"
         + "ESB_SHOP|localhost|8181|/mock/test/god/mode|GET|{}|{}||[{\"operation\":\"shift\",\"spec\":{\"store\":\"STORE_))\"}}]|{}\n"
-        +"FREEBIES|localhost|8181|/mock/esb/fetch/freebies|GET|{}|{}||[{\"operation\":\"shift\",\"spec\":{\"*\":{\"displayPackDescription\":\"DISPLAY_PACK_DESC_&1\",\"quota\":\"QUOTA_&1\"}}}]|{}\n";
+        +"FREEBIES|localhost|8181|/mock/esb/fetch/freebies|GET|{}|{}||[{\"operation\":\"shift\",\"spec\":{\"*\":{\"displayPackDescription\":\"DISPLAY_PACK_DESC_&1\",\"quota\":\"QUOTA_&1\"}}}]|{}\n"
+        +"XML_TEST|localhost|8181|/mock/xml/response|GET|{}|{}||[{\"operation\":\"shift\",\"spec\":{\"soap:Envelope\":{\"soap:Body\":{\"m:GetStockPriceResponse\":{\"m:Price\":\"STOCK_PRICE\"}}}}}]|{}\n"
+        +"NDS_TEST|localhost|8181|/mock/NDSLookupService/services/NDSLookupService|POST||{\"SoapAction\":\"getLookUpServiceDetails\"}||[{\"operation\":\"shift\",\"spec\":{\"soapenv:Envelope\":{\"soapenv:Body\":{\"getLookUpServiceDetailsResponse\":{\"getLookUpServiceReturn\":{\"lookupResponseList\":{\"mapEntry\":{\"*\":{\"attributeName\":\"ATTRIB_NAME-&1\",\"attributeValue\":\"ATTRIB-&1\"}}}}}}}}}]|{}\n";
     IntegrationDataBuilderUtils.init(systemCsv);
 
     List<Function<Void,RulesMetaData>> functionsList = new ArrayList<>();

@@ -79,6 +79,7 @@ public class DroolFileGenerationUtil {
   }
 
 
+  @Deprecated
   public static void droolsStringBuilder(Function<Void,RulesMetaData> function){
     RulesMetaData rulesMetaTest = function.apply(null);
     StringBuilder stringBuilder = new StringBuilder();
