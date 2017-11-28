@@ -55,7 +55,7 @@ public class IntegrationPOC {
         + "ESB_SHOP|localhost|8181|/mock/test/god/mode|GET|{}|{}||[{\"operation\":\"shift\",\"spec\":{\"store\":\"STORE_))\"}}]|{}\n"
         +"FREEBIES|localhost|8181|/mock/esb/fetch/freebies|GET|{}|{}||[{\"operation\":\"shift\",\"spec\":{\"*\":{\"displayPackDescription\":\"DISPLAY_PACK_DESC_&1\",\"quota\":\"QUOTA_&1\"}}}]|{}\n"
         +"XML_TEST|localhost|8181|/mock/xml/response|GET|{}|{}||[{\"operation\":\"shift\",\"spec\":{\"soap:Envelope\":{\"soap:Body\":{\"m:GetStockPriceResponse\":{\"m:Price\":\"STOCK_PRICE\"}}}}}]|{}\n"
-        +"NDS_TEST|localhost|8181|/mock/NDSLookupService/services/NDSLookupService|POST||{\"SoapAction\":\"getLookUpServiceDetails\"}||[{\"operation\":\"shift\",\"spec\":{\"soapenv:Envelope\":{\"soapenv:Body\":{\"getLookUpServiceDetailsResponse\":{\"getLookUpServiceReturn\":{\"lookupResponseList\":{\"mapEntry\":{\"*\":{\"attributeName\":\"ATTRIB_NAME-&1\",\"attributeValue\":\"ATTRIB-&1\"}}}}}}}}}]|{}\n";
+        +"NDS_TEST|localhost|8181|/mock/NDSLookupService/services/NDSLookupService|POST||{\"SoapAction\":\"getLookUpServiceDetails\"}||[{\"operation\":\"shift\",\"spec\":{\"soapenv:Envelope\":{\"soapenv:Body\":{\"getLookUpServiceDetailsResponse\":{\"getLookUpServiceReturn\":{\"lookupResponseList\":{\"mapEntry\":{\"*\":{\"attributeValue\":\"@(1,attributeName)\"}}}}}}}}}]|{}\n";
     IntegrationDataBuilderUtils.init(systemCsv);
 
     List<Function<Void,RulesMetaData>> functionsList = new ArrayList<>();

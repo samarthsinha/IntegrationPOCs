@@ -137,6 +137,7 @@ public class IntegrationDataBuilderUtils {
       String contentType = strings.get(0)!=null?strings.get(0).toLowerCase():"";
       if(contentType.contains("xml")){
         JSONObject xmlJsonObject = XML.toJSONObject(httpResponseObject.getResponse());
+        System.out.println(xmlJsonObject.toString());
         return xmlJsonObject.toString();
       }else if(contentType.contains("json")){
         return httpResponseObject.getResponse();
