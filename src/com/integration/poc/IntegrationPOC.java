@@ -29,19 +29,40 @@ public class IntegrationPOC {
     return rulesMetaData;
   };
 
+  public static Function<Void,RulesMetaData> freeBiesRule = aVoid -> {
+    RulesMetaData rulesMetaData = new RulesMetaData();
+    rulesMetaData.setTagName("ONLINE FREEBIES");
+    rulesMetaData.setRuleName("FREEBIES");
+    rulesMetaData.setSystemName("FREEBIES");
+    rulesMetaData.setOutputVariableName("response");
+    rulesMetaData.setResponseParamsName("out");
+    rulesMetaData.setCodeBlock("\tif(null != $rule.responseParamsName && $rule.responseParamsName#[[.size()]]# > 0) {\n"
+        + "\t for(int i=0;i<10;i++){\n\t\t\t"
+        + "\t\tif($rule.responseParamsName#[[.get(\"DISPLAY_PACK_DESC_]]#\"+i)!=null){\n"
+        + "\t\t\t$rule.outputVariableName#[[.put(\"DESC_\"+i,]]#$rule.responseParamsName#[[.get(\"DISPLAY_PACK_DESC_]]#\"+i));\n"
+        + "\t\t\t}"
+        + "}\n"
+        + "\t  }\n");
+    return rulesMetaData;
+  };
+
+
+
   public static void main(String[] args)
       throws Exception {
     String systemCsv = "ESB_LOAN|localhost|8181|/mock/esb/fetchLoanDetails|GET|{PAYLOAD}|{HEADER}|msidsn=$msisdn&transaction-id=$transactionid|[{\"operation\":\"shift\",\"spec\":{\"manageCustomerDebtProfileResMsg\":{\"dataArea\":{\"manageCustomerDebtProfileResponse\":{\"geographicAddress\":{\"circle\":\"CIRCLE\"},\"loanDetails\":{\"loan\":{\"*\":{\"customerCreditProfile\":{\"creditType\":\"CREDIT-TYPE-&2\",\"eligibility\":\"LOAN-ELIGIB-&2\"}}}}}}}}}]|{\"$msisdn\":\"MSISDN\",\"$transactionid\":\"TRANSACTIONID\"}\n"
         + "ESB_RECOVERY|localhost|8181|/mock/esb/fetchLoanDetails|GET|{}|{}||[{\"operation\":\"shift\",\"spec\":{\"manageCustomerDebtProfileResMsg\":{\"dataArea\":{\"manageCustomerDebtProfileResponse\":{\"geographicAddress\":{\"circle\":\"CIRCLE\"},\"recoveryDetails\":{\"recovery\":{\"*\":{\"dunningNotification\":{\"type\":\"REC-TYPE-&2\",\"startDate\":\"REC-START-DATE-&2\",\"date\":\"REC-DATE-&2\",\"amount\":\"REC-AMOUNT-&2\"}}}}}}}}}]|{}\n"
-        + "ESB_SHOP|localhost|8181|/mock/test/god/mode|GET|{}|{}||[{\"operation\":\"shift\",\"spec\":{\"store\":\"STORE_))\"}}]|{}\n";
+        + "ESB_SHOP|localhost|8181|/mock/test/god/mode|GET|{}|{}||[{\"operation\":\"shift\",\"spec\":{\"store\":\"STORE_))\"}}]|{}\n"
+        +"FREEBIES|localhost|8181|/mock/esb/fetch/freebies|GET|{}|{}||[{\"operation\":\"shift\",\"spec\":{\"*\":{\"displayPackDescription\":\"DISPLAY_PACK_DESC_&1\",\"quota\":\"QUOTA_&1\"}}}]|{}\n";
     IntegrationDataBuilderUtils.init(systemCsv);
 
-//    List<Function<Void,RulesMetaData>> functionsList = new ArrayList<>();
-//    functionsList.add(DroolFileGenerationUtil.loanRecovery);
-//    functionsList.add(DroolFileGenerationUtil.loanDetails);
-//    functionsList.add(IntegrationPOC.function);
-//    DroolFileGenerationUtil droolFileGenerationUtil = new DroolFileGenerationUtil();
-//    DroolFileGenerationUtil.droolsBuilderFromVelocity(functionsList);
+    List<Function<Void,RulesMetaData>> functionsList = new ArrayList<>();
+    functionsList.add(DroolFileGenerationUtil.loanRecovery);
+    functionsList.add(DroolFileGenerationUtil.loanDetails);
+    functionsList.add(IntegrationPOC.function);
+    functionsList.add(IntegrationPOC.freeBiesRule);
+    DroolFileGenerationUtil droolFileGenerationUtil = new DroolFileGenerationUtil();
+    DroolFileGenerationUtil.droolsBuilderFromVelocity(functionsList);
 
     DroolsDiagnosticService droolsDiagnosticService = DroolsDiagnosticService.getInstance();
 //    droolFileGenerationUtil.droolsStringBuilder(DroolFileGenerationUtil.loanDetails);
@@ -59,6 +80,10 @@ public class IntegrationPOC {
     readMap(diagnose.getOutputParams());
 
     droolsTransaction.getInputParams().put("tag","SHOP ADIDAS");
+    diagnose = droolsDiagnosticService.diagnose(droolsTransaction);
+    readMap(diagnose.getOutputParams());
+
+    droolsTransaction.getInputParams().put("tag","ONLINE FREEBIES");
     diagnose = droolsDiagnosticService.diagnose(droolsTransaction);
     readMap(diagnose.getOutputParams());
 

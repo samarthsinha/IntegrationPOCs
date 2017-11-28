@@ -1,0 +1,88 @@
+package com.integartion.poc.drools;
+
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+import com.integration.poc.droolsgen.DroolsTransaction;
+import com.integration.poc.IntegrationDataBuilderUtils;
+import java.util.LinkedHashMap;
+
+rule "LOAN_RECOVERY_DETAILS"
+
+no-loop
+when
+  $droolsTransaction : DroolsTransaction(null != inputParams.get("tag") && inputParams.get("tag").equalsIgnoreCase("ESB - RECOVERY DETAILS"))
+then
+    Map<String, String> response = new LinkedHashMap<String, String>();
+    Map<String,String> outParams = IntegrationDataBuilderUtils.getResponseFromSystem("ESB_RECOVERY", $droolsTransaction.getInputParams());
+String circle = null;
+		String optionValue = null;
+		if(null != outParams && outParams.size() > 0) {
+    	for(int i=0;i<10;i++){
+      		  response.put("LOAN TYPE/AMOUNT/DATE "+i,outParams.get("REC-TYPE-"+i)+"/" + outParams.get("REC-AMOUNT-"+i)+ "/" + outParams.get("REC-DATE-"+i));
+      	}
+	  }    $droolsTransaction.setOutputParams(response);
+end
+
+
+rule "GET_LOAN_DETAILS"
+
+no-loop
+when
+  $droolsTransaction : DroolsTransaction(null != inputParams.get("tag") && inputParams.get("tag").equalsIgnoreCase("ESB - LOAN DETAILS"))
+then
+    Map<String, String> response = new LinkedHashMap<String, String>();
+    Map<String,String> outParams = IntegrationDataBuilderUtils.getResponseFromSystem("ESB_LOAN", $droolsTransaction.getInputParams());
+String circle = null;
+		String optionValue = null;
+		if(null != outParams && outParams.size() > 0) {
+	   		circle = outParams.get("CIRCLE");
+			if(null == circle) {
+      			optionValue = "Manual Step";
+			} else if(circle.equalsIgnoreCase("DL")) {
+				optionValue = "DELHI";
+			} else {
+     	 optionValue = "OTHER";
+    	}
+	} else {
+		optionValue = "Manual Step";//Manual Step
+	}
+	response.put("output", optionValue);
+	    $droolsTransaction.setOutputParams(response);
+end
+
+
+rule "STOREFRONT"
+
+no-loop
+when
+  $droolsTransaction : DroolsTransaction(null != inputParams.get("tag") && inputParams.get("tag").equalsIgnoreCase("SHOP ADIDAS"))
+then
+    Map<String, String> response = new LinkedHashMap<String, String>();
+    Map<String,String> out = IntegrationDataBuilderUtils.getResponseFromSystem("ESB_SHOP", $droolsTransaction.getInputParams());
+	if(null != out && out.size() > 0) {
+			response.put("STORE_NEW",out.get("STORE_))"));
+	  }
+    $droolsTransaction.setOutputParams(response);
+end
+
+
+rule "FREEBIES"
+
+no-loop
+when
+  $droolsTransaction : DroolsTransaction(null != inputParams.get("tag") && inputParams.get("tag").equalsIgnoreCase("ONLINE FREEBIES"))
+then
+    Map<String, String> response = new LinkedHashMap<String, String>();
+    Map<String,String> out = IntegrationDataBuilderUtils.getResponseFromSystem("FREEBIES", $droolsTransaction.getInputParams());
+	if(null != out && out.size() > 0) {
+	 for(int i=0;i<10;i++){
+					if(out.get("DISPLAY_PACK_DESC_"+i)!=null){
+			response.put("DESC_"+i,out.get("DISPLAY_PACK_DESC_"+i));
+			}}
+	  }
+    $droolsTransaction.setOutputParams(response);
+end
+
