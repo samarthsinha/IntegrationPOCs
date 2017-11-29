@@ -86,3 +86,18 @@ then
     $droolsTransaction.setOutputParams(response);
 end
 
+
+rule "NDS_FETCH_CIRCLE_NAME"
+
+no-loop
+when
+  $droolsTransaction : DroolsTransaction(null != inputParams.get("tag") && inputParams.get("tag").equalsIgnoreCase("NDS - CIRCLE"))
+then
+    Map<String, String> response = new LinkedHashMap<String, String>();
+    Map<String,String> out = IntegrationDataBuilderUtils.getResponseFromSystem("NDS_TEST", $droolsTransaction.getInputParams());
+		if(null != out && out.size() > 0) {
+			response.put("NDS_CIRCLE",out.get("bharti-circle"));
+	  }
+    $droolsTransaction.setOutputParams(response);
+end
+

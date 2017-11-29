@@ -50,6 +50,7 @@ public class DroolsDiagnosticService {
       }
       ksession = kbase.newStatefulKnowledgeSession();
       ksession.insert(droolsTransaction);
+      System.out.println("*******Firing tag rule : "+droolsTransaction.inputParams.get("tag"));
       ksession.fireAllRules();
     } catch (Throwable throwable) {
       System.out.println(throwable);

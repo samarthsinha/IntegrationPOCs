@@ -46,6 +46,18 @@ public class IntegrationPOC {
     return rulesMetaData;
   };
 
+  public static Function<Void,RulesMetaData> ndsRule = aVoid -> {
+    RulesMetaData rulesMetaData = new RulesMetaData();
+    rulesMetaData.setTagName("NDS - CIRCLE");
+    rulesMetaData.setRuleName("NDS_FETCH_CIRCLE_NAME");
+    rulesMetaData.setSystemName("NDS_TEST");
+    rulesMetaData.setOutputVariableName("response");
+    rulesMetaData.setResponseParamsName("out");
+    rulesMetaData.setCodeBlock("\t\tif(null != $rule.responseParamsName && $rule.responseParamsName#[[.size()]]# > 0) {\n"
+        +"\t\t\t$rule.outputVariableName#[[.put(\"NDS_CIRCLE\"]]#,$rule.responseParamsName#[[.get(\"bharti-circle\")]]#);\n"
+        + "\t  }\n");
+    return rulesMetaData;
+  };
 
 
   public static void main(String[] args)
@@ -57,17 +69,14 @@ public class IntegrationPOC {
         +"XML_TEST|localhost|8181|/mock/xml/response|GET|{}|{}||[{\"operation\":\"shift\",\"spec\":{\"soap:Envelope\":{\"soap:Body\":{\"m:GetStockPriceResponse\":{\"m:Price\":\"STOCK_PRICE\"}}}}}]|{}\n"
         +"NDS_TEST|localhost|8181|/mock/NDSLookupService/services/NDSLookupService|POST||{\"SoapAction\":\"getLookUpServiceDetails\"}||[{\"operation\":\"shift\",\"spec\":{\"soapenv:Envelope\":{\"soapenv:Body\":{\"getLookUpServiceDetailsResponse\":{\"getLookUpServiceReturn\":{\"lookupResponseList\":{\"mapEntry\":{\"*\":{\"attributeValue\":\"@(1,attributeName)\"}}}}}}}}}]|{}\n";
     IntegrationDataBuilderUtils.init(systemCsv);
-
     List<Function<Void,RulesMetaData>> functionsList = new ArrayList<>();
     functionsList.add(DroolFileGenerationUtil.loanRecovery);
     functionsList.add(DroolFileGenerationUtil.loanDetails);
     functionsList.add(IntegrationPOC.function);
     functionsList.add(IntegrationPOC.freeBiesRule);
-    DroolFileGenerationUtil droolFileGenerationUtil = new DroolFileGenerationUtil();
+    functionsList.add(IntegrationPOC.ndsRule);
     DroolFileGenerationUtil.droolsBuilderFromVelocity(functionsList);
-
     DroolsDiagnosticService droolsDiagnosticService = DroolsDiagnosticService.getInstance();
-//    droolFileGenerationUtil.droolsStringBuilder(DroolFileGenerationUtil.loanDetails);
 
     DroolsTransaction droolsTransaction = new DroolsTransaction();
 
@@ -86,6 +95,10 @@ public class IntegrationPOC {
     readMap(diagnose.getOutputParams());
 
     droolsTransaction.getInputParams().put("tag","ONLINE FREEBIES");
+    diagnose = droolsDiagnosticService.diagnose(droolsTransaction);
+    readMap(diagnose.getOutputParams());
+
+    droolsTransaction.getInputParams().put("tag","NDS - CIRCLE");
     diagnose = droolsDiagnosticService.diagnose(droolsTransaction);
     readMap(diagnose.getOutputParams());
 

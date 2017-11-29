@@ -2,7 +2,6 @@ package com.integration.poc;
 
 import com.bazaarvoice.jolt.Chainr;
 import com.bazaarvoice.jolt.JsonUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -30,9 +29,9 @@ public class IntegrationDataBuilderUtils {
    * @param systemCsv
    */
   public static void init(String systemCsv){
-//        String csv = "localhost|8181|/mock/esb/fetchLoanDetails|GET|{}|{}|[{\"operation\":\"shift\",\"spec\":{\"manageCustomerDebtProfileResMsg\":{\"dataArea\":{\"manageCustomerDebtProfileResponse\":{\"geographicAddress\":{\"circle\":\"CIRCLE\"},\"loanDetails\":{\"loan\":{\"*\":{\"customerCreditProfile\":{\"creditType\":\"CRED-&2\"}}}},\"recoveryDetails\":{\"recovery\":{\"*\":{\"dunningNotification\":{\"type\":\"REC-TYPE-&2\",\"startDate\":\"REC-START-DATE-&2\",\"date\":\"REC-DATE-&2\",\"amount\":\"REC-AMOUNT-&2\"}}}}}}}}}]";
     String[] lines = systemCsv.split("\n");
     Arrays.stream(lines).forEach(line->{
+      System.out.println(line);
       String[] splitted = line.split("[|]");
       RequestResponseModel requestResponseModel = new RequestResponseModel();
       requestResponseModel.setSystemName(splitted[0]);
@@ -48,11 +47,6 @@ public class IntegrationDataBuilderUtils {
         requestResponseModel.setPlaceholderToInputKey(objectMapper.readValue(splitted[9],new TypeReference<Map<String,String>>(){}));
       } catch (IOException e) {
 
-      }
-      try {
-        System.out.println(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(requestResponseModel));
-      } catch (JsonProcessingException e) {
-        e.printStackTrace();
       }
       systemData.put(requestResponseModel.getSystemName(),requestResponseModel);
 
